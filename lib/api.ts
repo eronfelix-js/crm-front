@@ -3,7 +3,7 @@ import axios from 'axios';
 import { CreateClienteDTO, CreateOportunidadeDTO, UpdateOportunidadeDTO } from './types';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api', // Substitua pela URL real do backend
+  baseURL: 'http://localhost:8080/api'
 });
 
 export const api = {

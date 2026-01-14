@@ -1,5 +1,15 @@
 // Tipos e interfaces do CRM
 
+// lib/types.ts
+export interface Oportunidade {
+  id: string; // Se o backend retorna Long como string
+  titulo: string;
+  valorEstimado: string; // Se BigDecimal é enviado como string
+  etapa: EtapaVenda;
+  cliente: Cliente;
+  dataCriacao: string;
+}
+
 export enum EtapaVenda {
   PROSPECCAO = "PROSPECCAO",
   QUALIFICACAO = "QUALIFICACAO",
@@ -14,14 +24,6 @@ export interface Cliente {
   telefone: string
 }
 
-export interface Oportunidade {
-  id: number
-  titulo: string
-  valorEstimado: number
-  etapa: EtapaVenda
-  cliente: Cliente
-}
-
 export interface CreateClienteDTO {
   nome: string
   email: string
@@ -33,6 +35,13 @@ export interface CreateOportunidadeDTO {
   valorEstimado: number
   etapa: EtapaVenda
   clienteId: number
+}
+
+export interface UpdateOportunidadeDTO {
+  titulo?: string
+  valorEstimado?: number
+  etapa?: EtapaVenda
+  clienteId?: number
 }
 
 export interface Venda {

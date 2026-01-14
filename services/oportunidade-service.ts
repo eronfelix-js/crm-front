@@ -2,14 +2,15 @@
 
 import { api } from "@/lib/api"
 import type { Oportunidade, CreateOportunidadeDTO, UpdateOportunidadeDTO, EtapaVenda } from "@/lib/types"
-import { mockOportunidades, mockClientes, delay } from "./mock-data"
+import { mockOportunidades, delay } from "./mock-data"
+import { clientesData } from "./cliente-service"
 
 // Flag para usar dados mock (true no preview, false em produção)
 const USE_MOCK = !process.env.NEXT_PUBLIC_API_URL
 
 // Armazena oportunidades em memória para o modo mock
 const oportunidadesData = [...mockOportunidades]
-let nextId = Math.max(...oportunidadesData.map((o) => o.id)) + 1
+let nextId = Math.max(...oportunidadesData.map((o) => Number(o.id))) + 1
 
 export const oportunidadeService = {
   /**
@@ -21,7 +22,7 @@ export const oportunidadeService = {
       return [...oportunidadesData]
     }
 
-    const response = await api.get<Oportunidade[]>("/oportunidades")
+    const response = await api.oportunidades.listar()
     return response.data
   },
 
@@ -38,7 +39,7 @@ export const oportunidadeService = {
       return { ...oportunidade }
     }
 
-    const response = await api.get<Oportunidade>(`/oportunidades/${id}`)
+    const response = await api.oportunidades.buscarPorId(id)
     return response.data
   },
 
@@ -51,7 +52,7 @@ export const oportunidadeService = {
       return oportunidadesData.filter((o) => o.etapa === etapa)
     }
 
-    const response = await api.get<Oportunidade[]>(`/oportunidades/etapa/${etapa}`)
+    const response = await api.oportunidades.listar()
     return response.data
   },
 
@@ -61,7 +62,7 @@ export const oportunidadeService = {
   async criar(data: CreateOportunidadeDTO): Promise<Oportunidade> {
     if (USE_MOCK) {
       await delay(500)
-      const cliente = mockClientes.find((c) => c.id === data.clienteId)
+      const cliente = clientesData.find((c) => c.id === data.clienteId)
       if (!cliente) {
         throw new Error("Cliente não encontrado")
       }
@@ -71,12 +72,13 @@ export const oportunidadeService = {
         valorEstimado: data.valorEstimado,
         etapa: data.etapa,
         cliente,
+        dataCriacao: new Date().toISOString(),
       }
       oportunidadesData.push(novaOportunidade)
       return novaOportunidade
     }
 
-    const response = await api.post<Oportunidade>("/oportunidades", data)
+    const response = await api.oportunidades.criar(data)
     return response.data
   },
 
@@ -92,7 +94,7 @@ export const oportunidadeService = {
       }
 
       const cliente = data.clienteId
-        ? mockClientes.find((c) => c.id === data.clienteId)
+        ? clientesData.find((c) => c.id === data.clienteId)
         : oportunidadesData[index].cliente
 
       oportunidadesData[index] = {
@@ -106,7 +108,7 @@ export const oportunidadeService = {
       return { ...oportunidadesData[index] }
     }
 
-    const response = await api.put<Oportunidade>(`/oportunidades/${id}`, data)
+    const response = await api.oportunidades.atualizar(id, data)
     return response.data
   },
 
@@ -124,6 +126,6 @@ export const oportunidadeService = {
       return
     }
 
-    await api.delete(`/oportunidades/${id}`)
+    await api.oportunidades.deletar(id)
   },
 }

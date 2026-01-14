@@ -9,7 +9,7 @@ const USE_MOCK = !process.env.NEXT_PUBLIC_API_URL
 
 // Armazena clientes em memória para o modo mock
 const clientesData = [...mockClientes]
-let nextId = Math.max(...clientesData.map((c) => c.id)) + 1
+let nextId = clientesData.length > 0 ? Math.max(...clientesData.map((c) => c.id)) + 1 : 1
 
 export const clienteService = {
   /**
@@ -26,7 +26,7 @@ export const clienteService = {
       return novoCliente
     }
 
-    const response = await api.post<Cliente>("/clientes", data)
+    const response = await api.clientes.criar(data)
     return response.data
   },
 
@@ -39,7 +39,9 @@ export const clienteService = {
       return [...clientesData]
     }
 
-    const response = await api.get<Cliente[]>("/clientes")
+    const response = await api.clientes.listar()
     return response.data
   },
 }
+
+export { clientesData }

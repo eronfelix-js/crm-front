@@ -9,6 +9,7 @@ const apiClient = axios.create({
 export const api = {
   oportunidades: {
     listar: () => apiClient.get('/oportunidades'),
+    buscarPorId: (id: number) => apiClient.get(`/oportunidades/${id}`),
     criar: (data: CreateOportunidadeDTO) => apiClient.post('/oportunidades', data),
     atualizar: (id: number, data: UpdateOportunidadeDTO) => apiClient.put(`/oportunidades/${id}`, data),
     deletar: (id: number) => apiClient.delete(`/oportunidades/${id}`),
@@ -16,6 +17,5 @@ export const api = {
   clientes: {
     listar: () => apiClient.get('/clientes'),
     criar: (data: CreateClienteDTO) => apiClient.post('/clientes', data),
-    // etc.
   },
 };
